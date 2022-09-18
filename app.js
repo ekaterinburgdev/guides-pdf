@@ -1,5 +1,3 @@
-'use strict'
-
 import { join } from 'path'
 import AutoLoad from '@fastify/autoload'
 import { fileURLToPath } from 'url';
