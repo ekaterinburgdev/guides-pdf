@@ -7,8 +7,13 @@ export const createPdf = async (urls, filename) => {
   const merger = new PDFMerger();
 
   for (const url of urls) {
-    await page.goto(url);
-    merger.add(await page.pdf());
+    await page.goto(url, {
+      waitUntil: 'networkidle0'
+    });
+    merger.add(await page.pdf({
+      printBackground: true,
+      format: 'A4'
+    }));
   }
 
   await merger.save(filename);
