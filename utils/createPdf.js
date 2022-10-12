@@ -29,6 +29,6 @@ export const createPdf = async (urls, filename) => {
   await compressor.addFile(filename);
   await compressor.process();
 
-  const data = await compressor.download()
-  await fs.writeFile(filename, data);
+  const data = await compressor.download();
+  await fs.writeFile('test.pdf', data);
 }
