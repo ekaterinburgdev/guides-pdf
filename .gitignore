@@ -47,11 +47,10 @@ profile-*
 # vim swap files
 *.swp
 
-# webstorm
-.idea
-
-# vscode
+# editor
 .vscode
+.fleet
+.idea
 *code-workspace
 
 # clinic
