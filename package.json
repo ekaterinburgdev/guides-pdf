@@ -23,7 +23,11 @@
     "fastify-cli": "5.4.0",
     "fastify-plugin": "4.0.0",
     "got": "12.4.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "pdf-lib": "^1.17.1",
     "pdf-merger-js": "4.1.1",
+    "pdfkit": "^0.13.0",
     "puppeteer": "18.0.2"
   },
   "devDependencies": {

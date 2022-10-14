@@ -1,34 +1,80 @@
-import PDFMerger from "pdf-merger-js";
-import { launch } from "puppeteer";
-import ILovePDFApi from "@ilovepdf/ilovepdf-nodejs";
-import fs from 'fs/promises';
-
-const iLovePdf = new ILovePDFApi(
-  process.env.PDF_PUBLIC_KEY, 
-  process.env.PDF_SECRET_KEY
-);
-
-const compressor = iLovePdf.newTask('compress');
+import puppeteer from "puppeteer";
 
 export const createPdf = async (urls, filename) => {
-  const browser = await launch();
-  const [page] = await browser.pages();
-  const merger = new PDFMerger();
+    const browser = await puppeteer.launch();
+    const [page] = await browser.pages();
+    let buffer;
 
-  for (const url of urls) {
-    await page.goto(url, {
-      waitUntil: 'networkidle0'
+    const pdfGenerate = async () => await page.evaluate(async () => {
+        async function addJS(pathName) {
+            return new Promise((res, _) => {
+                const script = document.createElement('script');
+                script.src = pathName;
+                document.body.appendChild(script)
+                script.onload = () => { res() }
+            })
+        }
+
+        await addJS('https://cdn.jsdelivr.net/npm/jspdf@2.4.0/dist/jspdf.umd.min.js');
+
+        const pdf = new window.jspdf.jsPDF({
+            orientation: 'p',
+            unit: 'pt',
+            format: 'a4'
+        });
+
+        pdf.html(document.querySelector('#__next'), {
+            margin: [28, 0, 28, 0],
+            autoPaging: 'text',
+        });
+
+        return pdf.output('arraybuffer');
     });
-    merger.add(await page.pdf({
-      printBackground: true,
-      format: 'a4'
-    }));
-  }
 
-  await merger.save(filename);
-  await compressor.addFile(filename);
-  await compressor.process();
+    function concatenate(...arrays) {
+        // Calculate byteSize from all arrays
+        let size = arrays.reduce((a, b) => a + b.byteLength, 0);
+        // Allcolate a new buffer
+        let result = new Uint8Array(size);
 
-  const data = await compressor.download();
-  await fs.writeFile('test.pdf', data);
-}
+        // Build the new array
+        let offset = 0;
+        for (let arr of arrays) {
+            result.set(arr, offset)
+            offset += arr.byteLength
+        }
+
+        return result;
+    }
+
+    const mergePdfs = async (pdfsToMerges) => {
+        const mergedPdf = await window.PDFDocument.create();
+        const actions = pdfsToMerges.map(async pdfBuffer => {
+            const pdf = await window.PDFDocument.load(pdfBuffer);
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            copiedPages.forEach((page) => {
+                mergedPdf.addPage(page);
+            });
+        });
+        await Promise.all(actions);
+        return await mergedPdf.save(`${filename}.pdf`);
+    }
+
+    for (const url of urls) {
+        await Promise.all([
+            page.waitForNavigation(),
+            page.goto(url, {
+                timeout: 0,
+                waitUntil: 'networkidle2'
+            }),
+            page.waitForSelector('#__next'),
+        ]);
+        buffer = concatenate(await pdfGenerate(url));
+        await page.waitForNavigation({
+            waitUntil: 'domcontentloaded'
+        })
+    }
+
+    await mergePdfs(buffer, filename);
+    await browser.close();
+};
