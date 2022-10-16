@@ -10,7 +10,7 @@ export default async function (fastify, _) {
       .filter(url => url[0] === request.params.params)
       .map(arr => `https://guides.ekaterinburg.design/${arr.join('/')}`)
 
-    createPdf(guideUrls, `merge.pdf`)
+    await createPdf(guideUrls, `merge`)
 
     return {
       guide: guideUrls,
