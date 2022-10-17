@@ -15,14 +15,9 @@ export const createPdf = async (urls, filename) => {
     const pdfGenerate = () => {
         return page.evaluate(() => {
                 function addJS(pathName) {
-                    return (res, _) => {
-                        const script = document.createElement('script');
-                        script.src = pathName;
-                        document.body.appendChild(script)
-                        script.onload = () => {
-                            res()
-                        }
-                    }
+                    const script = document.createElement('script');
+                    script.src = pathName;
+                    document.body.appendChild(script);
                 }
 
                 addJS('https://cdn.jsdelivr.net/npm/jspdf@2.4.0/dist/jspdf.umd.min.js');
