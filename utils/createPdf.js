@@ -1,44 +1,57 @@
 import puppeteer from "puppeteer";
 import * as fs from "fs";
 
+// TODO: https://github.com/parallax/jsPDF/issues/2640
 export const createPdf = async (urls, filename) => {
-    fs.writeFile(`${filename}.pdf`, '', function (err) {
+    fs.writeFile(`${filename}.pdf`, '', (err) => {
         if (err) throw err;
         console.log(`File ${filename}.pdf is created successfully.`);
     });
+
     const browser = await puppeteer.launch({
-        headless: false
+        headless: false,
+        ignoreHTTPSErrors: true,
+        devtools: true
     });
+
     const [page] = await browser.pages();
-    await page.setDefaultNavigationTimeout(0);
 
-    const pdfGenerate = () => {
-        return page.evaluate(() => {
-                function addJS(pathName) {
-                    const script = document.createElement('script');
-                    script.src = pathName;
-                    document.body.appendChild(script);
-                }
+    await page.addScriptTag({
+        path: new URL('../node_modules/html2canvas/dist/html2canvas.min.js', import.meta.url).pathname,
+    });
 
-                addJS('https://cdn.jsdelivr.net/npm/jspdf@2.4.0/dist/jspdf.umd.min.js');
-                addJS('https://cdn.jsdelivr.net/npm/html2canvas@1.3.3/dist/html2canvas.min.js');
-                addJS('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+    await page.addScriptTag({
+        path: new URL('../node_modules/jspdf/dist/jspdf.umd.min.js', import.meta.url).pathname,
+    });
 
-                const pdf = new window.jspdf.jsPDF({
+    await page.addStyleTag({
+        content: 'html { color: red; }'
+    });
+
+    const pdfGenerate = await page.evaluate(
+        async () => {
+            const reader = new FileReader();
+            const generatePdf = (res, rej) => {
+                /**  @type {import('jspdf')} */
+                const jspdf = window.jspdf;
+                const pdf = new jspdf.jsPDF({
                     orientation: 'p',
                     unit: 'pt',
                     format: 'a4'
                 });
-
-                pdf.html(document.querySelector('[class*="Template_templateColumn"]'), {
+                pdf.html(document.querySelector('html'), {
                     margin: [28, 0, 28, 0],
                     autoPaging: 'text',
+                    callback: (pdf) => {
+                        const data = pdf.output('blob')
+                        reader.readAsBinaryString(data);
+                        reader.onload = () => res(reader.result);
+                        reader.onerror = () => rej('Error occurred while reading binary string');
+                    }
                 });
-
-                return pdf.output('arraybuffer');
             }
-        )
-    };
+            return new Promise(generatePdf);
+        });
 
     for (const url of urls) {
         await Promise.all([
@@ -46,12 +59,10 @@ export const createPdf = async (urls, filename) => {
             page.goto(url, {
                 waitUntil: 'networkidle2'
             }),
-            page.waitForSelector('[class*="Template_templateColumn"]'),
+            page.waitForSelector('html'),
         ]);
-        
-        pdfGenerate().then(buffer =>
-            fs.appendFileSync(`${filename}.pdf`, Buffer.from(buffer))
-        );
+        const pdfData = Buffer.from(pdfGenerate, 'binary');
+        fs.appendFileSync(`${filename}.pdf`, pdfData);
     }
 
     await browser.close();
