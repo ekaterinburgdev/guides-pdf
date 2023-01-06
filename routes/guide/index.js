@@ -8,7 +8,7 @@ export default async function (fastify, _) {
     const allGuidesUrls = getAllUrls(children);
     const guideUrls = allGuidesUrls
       .filter(url => url[0] === request.params.params)
-      .map(arr => `https://guides.ekaterinburg.design/${arr.join('/')}`)
+      .map(arr => `http://localhost:8080/${arr.join('/')}`)
 
     createPdf(guideUrls, `merge.pdf`)
 
