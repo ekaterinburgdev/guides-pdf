@@ -2,6 +2,10 @@ import { join } from 'path'
 import AutoLoad from '@fastify/autoload'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import fs from 'fs';
+import { GUIDES_FOLDER } from './const.js';
+import fastifyStatic from '@fastify/static';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -9,6 +13,9 @@ const __dirname = dirname(__filename);
 export default async function (fastify, opts) {
   // Place here your custom code!
 
+  if (!fs.existsSync(GUIDES_FOLDER)) {
+    fs.mkdirSync(GUIDES_FOLDER, { recursive: true });
+  }
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins
@@ -24,5 +31,10 @@ export default async function (fastify, opts) {
   fastify.register(AutoLoad, {
     dir: join(__dirname, 'routes'),
     options: Object.assign({}, opts)
+  })
+
+  fastify.register(fastifyStatic, {
+    root: join(__dirname, GUIDES_FOLDER),
+    prefix: '/guides/',
   })
 }

@@ -3,7 +3,7 @@ import { launch } from "puppeteer";
 
 export const createPdf = async (urls, filename) => {
   const browser = await launch({
-      headless: false,
+      headless: true,
       ignoreHTTPSErrors: true
   });
   const [page] = await browser.pages();
