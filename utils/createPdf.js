@@ -4,7 +4,8 @@ import { launch } from "puppeteer";
 export const createPdf = async (urls, filename) => {
   const browser = await launch({
       headless: true,
-      ignoreHTTPSErrors: true
+      ignoreHTTPSErrors: true,
+      args: ['--no-sandbox']
   });
   const [page] = await browser.pages();
   const merger = new PDFMerger();
