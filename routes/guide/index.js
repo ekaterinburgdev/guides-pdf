@@ -4,8 +4,8 @@ import { GUIDES_FOLDER } from '../../const.js';                                 
 
 const GUIDES_URL = "https://guides.ekaterinburg.io/";
 
-export default async function (fastify, _) {
-  fastify.get('/:params', async function (request, _) {
+export default async function (fastify, reply) {
+  fastify.get('/:params', async function (request, reply) {
     const tree = await getTree();
     const children = tree?.children;
     const allGuidesUrls = getAllUrls(children);
@@ -13,10 +13,12 @@ export default async function (fastify, _) {
       .filter(url => url[0] === request.params.params)
       .map(arr => `${GUIDES_URL}${arr.join('/')}`);
 
-    if (guideUrls.length > 0){
-      createPdf(guideUrls, [GUIDES_FOLDER, `${request.params.params}.pdf`].join('/'));
+    if (guideUrls.length === 0){
+      return fastify.notFound(request, reply)
     }
 
+    createPdf(guideUrls, [GUIDES_FOLDER, `${request.params.params}.pdf`].join('/'));
+    
     return {
       guide: guideUrls,
     }
