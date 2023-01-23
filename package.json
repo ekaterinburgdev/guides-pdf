@@ -10,7 +10,7 @@
   "scripts": {
     "test": "tap \"test/**/*.test.js\"",
     "start": "fastify start -l info app.js",
-    "dev": "fastify start --ignore-watch merge.pdf -w -l info -P app.js"
+    "dev": "fastify start --ignore-watch guides/ -w -l info -P app.js"
   },
   "keywords": [],
   "author": "",
