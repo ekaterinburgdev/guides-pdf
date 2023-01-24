@@ -24,8 +24,8 @@
     "fastify-cli": "5.4.0",
     "fastify-plugin": "4.0.0",
     "got": "12.4.1",
-    "pdf-merger-js": "4.1.1",
-    "puppeteer": "18.0.2"
+    "pdf-merger-js": "4.2.0",
+    "puppeteer": "19.6.0"
   },
   "devDependencies": {
     "tap": "^16.1.0"

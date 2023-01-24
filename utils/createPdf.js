@@ -7,18 +7,21 @@ export const createPdf = async (urls, filename) => {
       ignoreHTTPSErrors: true,
       args: ['--no-sandbox']
   });
-  const [page] = await browser.pages();
+  const page = await browser.newPage();
   const merger = new PDFMerger();
 
   for (const url of urls) {
     await page.goto(url, {
-      waitUntil: 'networkidle0'
-    }, { timeout: 0 });
-    await merger.add(await page.pdf({
+      waitUntil: 'networkidle0',
+      timeout: 0
+    });
+    const pagePdf = await page.pdf({
       printBackground: true,
-      format: 'a4'
-    }));
+      format: 'a4',
+      timeout: 0
+    });
+    merger.add(pagePdf);
   }
   
-  merger.save(filename);
+  await merger.save(filename);
 }
