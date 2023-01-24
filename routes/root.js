@@ -5,6 +5,7 @@ export default async function (fastify, _) {
       Микросервис на Fastify для получения pdf файлов руководств
       /guide/:имя_руководства — создание pdf'ки нужного руководства
       /guides/ - получить список уже существующих pdf руководств
+      /guides/guide_name.pdf - получить руководство в pdf формате
     `
   })
 }
