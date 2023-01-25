@@ -4,13 +4,15 @@ import { GUIDES_FOLDER } from '../../const.js';                                 
 
 const GUIDES_URL = "https://guides.ekaterinburg.io/";
 
+const PAGES_TO_IGNORE = ['_index', 'general'];
+
 export default async function (fastify, reply) {
   fastify.get('/:params', async function (request, reply) {
     const tree = await getTree();
     const children = tree?.children;
     const allGuidesUrls = getAllUrls(children);
     const guideUrls = allGuidesUrls
-      .filter(url => url[0] === request.params.params)
+      .filter(url => url[0] === request.params.params && !PAGES_TO_IGNORE.includes(url[url.length - 1]))
       .map(arr => `${GUIDES_URL}${arr.join('/')}`);
 
     if (guideUrls.length === 0){
