@@ -5,7 +5,7 @@ import { dirname } from 'path';
 import fs from 'fs';
 import { GUIDES_FOLDER } from './const.js';
 import fastifyStatic from '@fastify/static';
-
+import cors from '@fastify/cors'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,6 +13,10 @@ const __dirname = dirname(__filename);
 export default async function (fastify, opts) {
   // Place here your custom code!
 
+  await fastify.register(cors, { 
+    // put your options here
+  })
+  
   if (!fs.existsSync(GUIDES_FOLDER)) {
     fs.mkdirSync(GUIDES_FOLDER, { recursive: true });
   };
