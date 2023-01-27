@@ -4,7 +4,7 @@ import { GUIDES_FOLDER } from '../../const.js';                                 
 
 const GUIDES_URL = "https://guides.ekaterinburg.io/";
 
-const PAGES_TO_IGNORE = ['_index', 'general'];
+const PAGES_TO_IGNORE = ['_index', 'general', 'general-provisions', 'module-1'];
 
 export default async function (fastify, reply) {
   fastify.get('/:params', async function (request, reply) {
