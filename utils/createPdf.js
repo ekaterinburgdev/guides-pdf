@@ -1,6 +1,11 @@
 import PDFMerger from "pdf-merger-js";
 import { launch } from "puppeteer";
 
+import path from 'node:path';
+import fs from 'node:fs';
+import process from "process";
+import { compress } from 'compress-pdf';
+
 export const createPdf = async (urls, filename) => {
   const browser = await launch({
       ignoreHTTPSErrors: true,
@@ -30,4 +35,10 @@ export const createPdf = async (urls, filename) => {
   }
   
   await merger.save(filename);
+  const buffer = await compress(path.resolve(process.cwd(), filename), {
+    imageQuality: 60
+  });
+  const compressedPdf = path.resolve(process.cwd(), `compress_${filename}`);
+
+  await fs.promises.writeFile(compressedPdf, buffer);
 }

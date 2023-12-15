@@ -22,6 +22,7 @@
     "@fastify/cors": "8.4.2",
     "@fastify/sensible": "5.5.0",
     "@fastify/static": "6.12.0",
+    "compress-pdf": "0.3.7",
     "fastify": "4.25.1",
     "fastify-cli": "5.9.0",
     "fastify-plugin": "4.5.1",
