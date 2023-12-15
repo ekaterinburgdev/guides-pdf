@@ -5,7 +5,7 @@ export const createPdf = async (urls, filename) => {
   const browser = await launch({
       ignoreHTTPSErrors: true,
       headless: 'new',
-      args: ['--no-sandbox']
+      args: ['--no-sandbox'],
   });
   const page = await browser.newPage();
   const merger = new PDFMerger();
@@ -18,7 +18,13 @@ export const createPdf = async (urls, filename) => {
     const pagePdf = await page.pdf({
       printBackground: true,
       format: 'a4',
-      timeout: 0
+      timeout: 0,
+      margin: {
+        top: '16px',
+        bottom: '16px',
+        left: '16px',
+        right: '16px'
+      }
     });
     merger.add(pagePdf);
   }

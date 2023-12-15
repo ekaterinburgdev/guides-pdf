@@ -11,6 +11,9 @@
     "start": "fastify start -a '0.0.0.0' -l info app.js",
     "dev": "fastify start --ignore-watch guides/ -w -l info -P app.js"
   },
+  "engines": {
+    "node": "20.10.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
