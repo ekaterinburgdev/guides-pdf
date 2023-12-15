@@ -1,23 +1,20 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+## guides-pdf
 
-## Available Scripts
+Тулза для генерации pdf файлов руководств Екатеринбурга
 
-In the project directory, you can run:
+## Зависимости
 
-### `npm run dev`
+- pupputeer
+- pdf-merger
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Команды
 
-### `npm start`
+- `npm i` — установка зависимостей
+- `npm start` – сборка проекта в папку `dist` (нужен для хостинга на сервере)
+- `npm dev` – сборка проекта с автоматическим подхватыванием изменений (пересборкой) при редактировании файлов.
 
-For production mode
+## Текущий API
 
-### `npm run test`
-
-Run the test cases.
-
-## Learn More
-
-To learn Fastify, check out the [Fastify documentation](https://www.fastify.io/docs/latest/).
+- `GET /guide/:имя_руководства` — создание pdf'ки нужного руководства
+- `GET /guides/` - получить список уже существующих pdf руководств ( ответ в формате {"guides": ["guide1.pdf", "guide2.pdf"]} )
+- `GET /guides/guide_name.pdf` - получить руководство в pdf формате

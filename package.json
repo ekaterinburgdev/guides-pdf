@@ -8,7 +8,6 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap \"test/**/*.test.js\"",
     "start": "fastify start -a '0.0.0.0' -l info app.js",
     "dev": "fastify start --ignore-watch guides/ -w -l info -P app.js"
   },
@@ -17,18 +16,14 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "5.0.0",
-    "@fastify/cors": "^8.2.0",
+    "@fastify/cors": "8.2.0",
     "@fastify/sensible": "5.0.0",
     "@fastify/static": "6.6.1",
-    "@ilovepdf/ilovepdf-nodejs": "^0.2.1",
     "fastify": "4.0.0",
     "fastify-cli": "5.4.0",
     "fastify-plugin": "4.0.0",
     "got": "12.4.1",
-    "pdf-merger-js": "4.2.0",
-    "puppeteer": "19.6.0"
-  },
-  "devDependencies": {
-    "tap": "^16.1.0"
+    "pdf-merger-js": "4.3.0",
+    "puppeteer": "21.6.0"
   }
 }
